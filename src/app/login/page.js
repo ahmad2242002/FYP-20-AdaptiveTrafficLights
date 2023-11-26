@@ -264,7 +264,7 @@ export default function Login() {
                   <div className=" grid grid-cols-2 text-black w-full pt-5 px-1 ">
                     <div className=" space-x-4  flex items-center justify-start">
                       <input type="checkbox" className=" h-4 w-4" />
-                      <span>Remeber me</span>
+                      <span>Remember me</span>
                     </div>
                     <p
                       className=" flex justify-end hover:underline cursor-pointer "

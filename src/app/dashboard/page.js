@@ -3,6 +3,8 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { Component, useState } from "react";
+import Sidebar from "../../components/sidebar";
+import Videoanalysis from '@/components/videoanalysis'
 export default function Dashboard(){
   const [showmenu, setShowMenu] = useState(null);
   const handleMenuBarClick = () => {
@@ -15,10 +17,15 @@ export default function Dashboard(){
   }
   return (
     <>
-      {status === "authenticated" ? (
-        <div>
-            <h1>Dashboard</h1>
-            <button onClick={signOut}>SignOut</button>
+    {status === "authenticated" ? (
+      <div
+          className="flex bg-[#E3FDFD] h-screen"
+          onClick={() => {
+            handleMenuBarClick();
+          }}
+        >
+          <Sidebar name = {session?.user?.name} active='analysis'></Sidebar>
+            <Videoanalysis></Videoanalysis>
         </div>
       ) : (
         router.push("/")
