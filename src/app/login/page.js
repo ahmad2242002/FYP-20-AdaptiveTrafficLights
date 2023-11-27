@@ -1,21 +1,14 @@
 "use client";
 import React, { Component, useState } from "react";
 import stlcsLogo from "@/images/stlcs.png";
-import googleicon from "@/images/googleicon.png";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import facebookicon from "@/images/facebookicon.png";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Box from "@mui/material/Box";
-import Popper from "@mui/material/Popper";
 import OTPConfirm from "@/components/OTPConfirm";
 import {
-  faCube,
-  faUser,
   faEnvelope,
   faEye,
-  faPhone,
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
