@@ -5,10 +5,8 @@ import { faCube, faDatabase, faGear, faSignOut } from "@fortawesome/free-solid-s
 import Image from "next/image";
 import gridicon from "@/images/gridicon.png";
 
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import layout from "@/images/layout.png";
-import layout1 from "@/images/layout2.png";
-import Link from "next/link";
 function Sidebar({active}) {
   {
     return (

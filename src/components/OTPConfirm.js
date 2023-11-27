@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
@@ -20,10 +19,6 @@ export default function OTPConfirm({ setConfirmOtp,fourDigitCode,showOtp, setSho
   };
 
   const handleOk = () => {
-    alert(otp)
-    const mergedOTP = otp.join('');
-    alert(mergedOTP)
-    alert(fourDigitCode)
     if(mergedOTP === fourDigitCode)
     {
       setConfirmOtp(true)
@@ -33,7 +28,6 @@ export default function OTPConfirm({ setConfirmOtp,fourDigitCode,showOtp, setSho
     {
       setConfirmOtp(false)
     }
-    // Handle the Ok action
     console.log("Confirmed OTP:", otp.join(""));
   };
 
