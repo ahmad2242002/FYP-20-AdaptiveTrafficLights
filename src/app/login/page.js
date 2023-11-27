@@ -40,17 +40,7 @@ export default function Login() {
     setShowButton(buttonValue);
   };
   const router = useRouter();
-  const changePage = () => {
-    router.push("/dashboard");
-  };
   const { status } = useSession();
-  const handleOnClick = () => {
-    signIn("google");
-  };
-
-  const handleOnClickFacbook = () => {
-    signIn("facebook");
-  };
 
   const [fogetPassword, setForgetPassword] = useState(false);
 
@@ -124,32 +114,6 @@ export default function Login() {
       console.error("Error sending welcome email:", error);
     }
   }
-  function isValidEmail(email) {
-    return /\S+@\S+\.\S+/.test(email);
-  }
-
-  const handleChange = (event) => {
-    [name, value] = event.target;
-    if (name === "username") {
-      if (!isValidEmail(event.target.value)) {
-        setError("Email is invalid");
-      } else {
-        setError(null);
-      }
-      setEmail(value);
-    } else if (name === "password") {
-      setPassword(value);
-    }
-  };
-
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(anchorEl ? null : event.currentTarget);
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popper" : undefined;
 
   return (
     <>
