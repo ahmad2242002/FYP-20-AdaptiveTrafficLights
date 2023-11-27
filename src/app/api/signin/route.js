@@ -7,9 +7,7 @@ export async function POST(request) {
   const connection = await connectMysql();
   if (connection) {
     try {
-      console.log("Connection Successfully");
       const { email, password } = await request.json();
-      console.log(email, password);
       console.log("Connection Successfully");
       const hashedPassword = await getPasswordByEmail(connection, email);
 
@@ -19,8 +17,6 @@ export async function POST(request) {
           { status: 401 }
         );
       }
-
-      console.log("hello:" + password);
       // Compare the entered password with the stored hash
       const passwordMatch = bcrypt.compareSync(password, hashedPassword);
       console.log(passwordMatch);
