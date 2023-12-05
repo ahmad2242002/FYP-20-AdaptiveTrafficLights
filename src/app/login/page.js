@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import OTPConfirm from "@/components/OTPConfirm";
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import { Snackbar } from "@mui/material";
 import {
   faEnvelope,
   faEye,
@@ -24,8 +27,8 @@ export default function Login() {
   const [confirmOtp, setConfirmOtp] = useState(false);
   const [fourDigitCode, setFourDigitCode] = useState("");
   const [sendcode, setsendcode] = useState("");
-
-  
+  const [message, setMessage] = useState("");
+  const [open, setOpen] = useState(false);
   
   const handleButtonClick = (buttonValue) => {
     if (showPass == "show") setShowPass("hide");
@@ -55,7 +58,6 @@ export default function Login() {
       try {
         //Call the signIn function with the credentials object
         const response = await signIn("credentials", { ...credentials });
-        console.log(response);
         if (response == null) {
           const errorData = await response.json();
           alert(errorData.error);
@@ -103,10 +105,83 @@ export default function Login() {
       } else {
         console.error(data.error); // Error message if the request fails
       }
+
     } catch (error) {
       console.error("Error sending welcome email:", error);
     }
   }
+
+
+  async function changePassword(event) {
+    event.preventDefault();
+    if(message === "Strong")
+    {
+      try {
+        const response = await fetch("http://localhost:3000/api/changePassword", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: email, password: password}),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert("password Change")
+          setOpen(true)
+          console.log(data.message); 
+        } else {
+          console.error(data.error); 
+        }
+
+      } catch (error) {
+        console.error("Error sending welcome email:", error);
+      }
+    }
+    else{
+      alert('Password is Week');
+    }
+  }
+
+  const handlePassword = (passwordValue) => {
+    const strengthChecks = {
+      length: 0,
+      hasUpperCase: false,
+      hasLowerCase: false,
+      hasDigit: false,
+      hasSpecialChar: false,
+    };
+
+    strengthChecks.length = passwordValue.length >= 8 ? true : false;
+    strengthChecks.hasUpperCase = /[A-Z]+/.test(passwordValue);
+    strengthChecks.hasLowerCase = /[a-z]+/.test(passwordValue);
+    strengthChecks.hasDigit = /[0-9]+/.test(passwordValue);
+    strengthChecks.hasSpecialChar = /[^A-Za-z0-9]+/.test(passwordValue);
+
+    let verifiedList = Object.values(strengthChecks).filter((value) => value);
+
+    let strength =
+      verifiedList.length == 5
+        ? "Strong"
+        : verifiedList.length >= 2
+        ? "Medium"
+        : "Weak";
+
+    setPassword(passwordValue);
+    setMessage(strength);
+
+    console.log("verifiedList: ", `${(verifiedList.length / 5) * 100}%`);
+  };
+
+  const getActiveColor = (type) => {
+    if (type === "Strong") return "#8BC926";
+    if (type === "Medium") return "#FEBD01";
+    return "#FF0054";
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <>
@@ -191,7 +266,7 @@ export default function Login() {
                 :
                 ''}
 
-                {fogetPassword&&confirmOtp?<div className="text-black flex bg-white my-1 border-2 hover:scale-105  items-baseline px-6 py-1 w-full rounded-xl">
+                {fogetPassword&&confirmOtp?<><div className="text-black flex bg-white my-1 border-2 hover:scale-105  items-baseline px-6 py-1 w-full rounded-xl">
                   <FontAwesomeIcon
                     onClick={() => {
                       showPass === "show"
@@ -212,11 +287,22 @@ export default function Login() {
                     required
                     value={password}
                     onChange={(e) => {
-                      setPassword(e.target.value);
+                      handlePassword(e.target.value);
                     }}
                     type={showButton === "password" ? "password" : "text"}
                   ></input>
-                </div>:''}
+                </div>
+                <div className=" w-full">
+                  {password.length !== 0 ? (
+                    <p
+                      className="message"
+                      style={{ color: getActiveColor(message) }}
+                    >
+                      Your password is {message}
+                    </p>
+                  ) : null}
+                </div></>
+                :''}
                 {fogetPassword === false ? (
                   <div className=" grid grid-cols-2 text-black w-full pt-5 px-1 ">
                     <div className=" space-x-4  flex items-center justify-start">
@@ -237,18 +323,29 @@ export default function Login() {
                 )}
                 <div
                   className={` mt-10 ${
-                    fogetPassword
+                    fogetPassword && confirmOtp === false
                       ? "grid grid-cols-2 w-full items-center space-x-2"
                       : "flex w-full"
                   } `}
                 >
+                  {
+                   confirmOtp? 
+                   <button
+                    className=" bg-[#71C9CE] my-3 w-full font-semibold h-12 border-2 active:scale-90 transition duration-200 drop-shadow-sm hover:scale-105 text-black border-[#A6E3E9] rounded-xl"
+                    name={"changePassword"}
+                    onClick={changePassword}
+                    >
+                    {"Change Password"}
+                  </button>
+                  :
                   <button
                     className=" bg-[#71C9CE] my-3 w-full font-semibold h-12 border-2 active:scale-90 transition duration-200 drop-shadow-sm hover:scale-105 text-black border-[#A6E3E9] rounded-xl"
                     name={fogetPassword ? "request" : "signin"}
-                  >
+                    >
                     {fogetPassword ? "Request" : "Sign In"}
                   </button>
-                  {fogetPassword ? (
+                  }
+                  {fogetPassword && confirmOtp === false? (
                     <button
                       className=" bg-[#71C9CE] my-1 w-full font-semibold h-12 border-2 active:scale-90 transition duration-200 drop-shadow-sm hover:scale-105 text-black border-[#A6E3E9] rounded-xl"
                       type="submit"
@@ -287,6 +384,11 @@ export default function Login() {
               )}
             </div>
           )}
+          <Snackbar open={open} autoHideDuration={6000} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success" sx={{ width: '100%', }}>
+              Password Change Successfully
+            </Alert>
+          </Snackbar>
         </div>
       ) : (
         router.push("/dashboard")

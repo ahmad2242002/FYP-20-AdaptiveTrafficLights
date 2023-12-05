@@ -25,12 +25,11 @@ function Videoanalysis() {
           <h1>Vehicle Feeds From Cameras</h1>
         </div>
     <div className=" flex justify-center flex-col items-center">
-      <div className='text-black flex flex-col p-10'> 
-        <div>
+      <div className='w-1/2 h-1/2 text-black items-center flex flex-col p-10'> 
+        <div className=''>
           <img id="video-feed" src="http://192.168.18.17:5000/video_feed" alt="Video Feed"/>
         </div>
       </div>
-      <h1 className=' text-2xl font-semibold '>Vehicle Count: {vehicleCount}</h1> 
       <div className=' flex text-black w-2/3 mt-10 space-x-5'>
         
         <button  className=" bg-[#71C9CE] my-1 w-full font-semibold h-12 border-2 active:scale-90 transition duration-200 drop-shadow-sm hover:scale-105 text-black border-[#A6E3E9] rounded-xl">Camera 1</button>

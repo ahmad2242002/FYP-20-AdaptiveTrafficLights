@@ -19,6 +19,7 @@ export default function OTPConfirm({ setConfirmOtp,fourDigitCode,showOtp, setSho
   };
 
   const handleOk = () => {
+    const mergedOTP = otp.join('');
     if(mergedOTP === fourDigitCode)
     {
       setConfirmOtp(true)
