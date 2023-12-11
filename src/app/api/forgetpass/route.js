@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export  async function POST(req) {
   try {
     // Get user email from the request
-    
+    console.log("helllo");
     const {email,code}  = await req.json();
     // Set up a nodemailer transporter
     const transporter = nodemailer.createTransport({
