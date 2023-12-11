@@ -20,7 +20,12 @@ function Videoanalysis() {
 }
   useEffect(() => {
     // Connect to the Socket.IO server
-    const socket = io.connect('http://192.168.18.17:5000');
+
+    //const socket = io.connect('http://192.168.18.17:5000');
+    const socket = io.connect('http://169.254.227.50:5000');
+
+    
+    
     // Event listener to capture count from the video feed
     socket.on('video_frame', (data) => {
       console.log('Received video_frame:', data);
@@ -73,7 +78,7 @@ function Videoanalysis() {
   return (
     <div className="w-full h-screen text-black">
       <div className="text-black text-center text-5xl mt-10 font-bold">
-        <h1>Vehicle Feeds From Cameras vehicle: {vehicleCount} and timer: {timer}</h1>
+        <h1>Vehicle Feeds From Cameras vehicle</h1>
         {console.log(status)}
       </div>
       <div className="flex justify-center flex-col items-center">
@@ -101,6 +106,10 @@ function Videoanalysis() {
                 }`}
               ></div>
             </div>
+          </div>
+          <div className='flex justify-between px-5 w-full'>
+            <h1 className=' font-semibold text-2xl bg-[#71C9CE] rounded-lg p-2 m-2'>Vehicle Count: {vehicleCount}</h1>
+            <h1 className=' font-semibold text-2xl bg-[#71C9CE] rounded-lg p-2 m-2'>Timer: {timer}</h1>
           </div>
         </div>
         <div className="flex text-black w-2/3 mt-10 space-x-5">
