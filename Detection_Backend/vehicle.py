@@ -29,7 +29,7 @@ def process_frame(frame, net, layer_names, classes):
             class_id = np.argmax(scores)
             confidence = scores[class_id]
 
-            if confidence > 0.5 and class_id == 2:  # Class ID 2 corresponds to 'car'
+            if confidence > 0.5:
                 center_x = int(detection[0] * width)
                 center_y = int(detection[1] * height)
                 w = int(detection[2] * width)
