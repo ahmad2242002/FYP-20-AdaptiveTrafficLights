@@ -40,7 +40,7 @@ def process_frame(frame, net, layer_names, classes):
             class_id = np.argmax(scores)
             confidence = scores[class_id]
 
-            if (confidence > 0.4) :  # Class ID 2 corresponds to 'car'
+            if (confidence > 0.4) : 
                 center_x = int(detection[0] * width)
                 center_y = int(detection[1] * height)
                 w = int(detection[2] * width)
@@ -68,7 +68,7 @@ def process_frame(frame, net, layer_names, classes):
     cv2.putText(frame, f'Number of Vehicles: {total}', (10, 40),
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, (47, 5, 5), 3)
 
-    return frame, len(boxes)
+    return frame, total
 
 #def main():
  #   net, layer_names, classes = initialize_yolo()
