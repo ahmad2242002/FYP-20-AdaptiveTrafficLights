@@ -16,17 +16,19 @@ import {
   faL,
 } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
+import Alert from '@mui/material/Alert';
+import { Snackbar } from "@mui/material";
 import Link from "next/link";
 export default function Signup() {
   const [showButton, setShowButton] = useState("password");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [showPass, setShowPass] = useState("show");
-
+  const [open, setOpen] = useState(false);
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [alertmessage, setAlertMessage] = useState("");
   const handleButtonClick = (buttonValue) => {
-    
     if (showPass == "show") setShowPass("hide");
     else setShowPass("show");
     setShowButton(buttonValue);
@@ -38,67 +40,80 @@ export default function Signup() {
 
   const [formData, setFormData] = useState({});
   async function handleSubmit(event) {
-    event.preventDefault()
-    if (message === "Strong") {
-      try {
-        setIsLoading(true)
-        console.log(formData)
-        const response = await fetch("http://localhost:3000/api/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body:JSON.stringify(formData),
-        });
-
-        if (!response.ok) {
-          event.preventDefault()
-          const errorData = await response.json();
-          throw new Error(errorData.error);
-        }
+    event.preventDefault();
+    const validateCnic = validateCNIC(formData.cnic);
+    if (validateCnic) {
+      if (message === "Strong") {
         try {
-          alert("check")
-          const response = await fetch('http://localhost:3000/api/send', {
-            method: 'POST',
+          setIsLoading(true);
+          console.log(formData);
+          const response = await fetch("http://localhost:3000/api/signup", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email: formData.email }),
+            body: JSON.stringify(formData),
           });
-      
-          const data = await response.json();
-      
-          if (response.ok) {
-            console.log(data.message); // Welcome email sent successfully
-          } else {
-            console.error(data.error); // Error message if the request fails
+
+          if (!response.ok) {
+            event.preventDefault();
+            const errorData = await response.json();
+            throw new Error(errorData.error);
           }
+          try {
+            const response = await fetch("http://localhost:3000/api/send", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email: formData.email }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              console.log(data.message); // Welcome email sent successfully
+            } else {
+              console.error(data.error); // Error message if the request fails
+            }
+          } catch (error) {
+            console.error("Error sending welcome email:", error);
+          }
+          // Reset form fields on successful registration
+          setFormData({});
+          setPassword("");
+          setIsLoading(false);
+          // Handle successful registration (redirect, show success message, etc.)
+          router.push("/");
+          console.log("User registered successfully");
         } catch (error) {
-          console.error('Error sending welcome email:', error);
+          // Handle registration error
+          event.preventDefault();
+
+          setError(true);
+        } finally {
+          event.preventDefault();
+          // Reset loading state
+          setIsLoading(false);
         }
-        // Reset form fields on successful registration
-        setFormData({});
-        setPassword('')
-        setIsLoading(false)
-        // Handle successful registration (redirect, show success message, etc.)
-        router.push("/")
-        console.log("User registered successfully");
-      } catch (error) {
-        // Handle registration error
-        event.preventDefault()
-        
-        setError(true)
-      } finally {
-        event.preventDefault()
-        // Reset loading state
-        setIsLoading(false);
+      } else {
+        setAlertMessage('Password not Valid')
+        setOpen(true)
+        event.preventDefault();
       }
-    } else {
-      alert("Password is Week");
-      
-      event.preventDefault();
+    }
+    else
+    {
+      setAlertMessage('Cnic not Valid')
+      setOpen(true)
     }
   }
+
+  const validateCNIC = (cnic) => {
+    // CNIC pattern: 12345-1234567-1
+    const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
+    return cnicPattern.test(cnic);
+  };
 
   const handlePassword = (passwordValue) => {
     const strengthChecks = {
@@ -134,6 +149,9 @@ export default function Signup() {
     if (type === "Strong") return "#8BC926";
     if (type === "Medium") return "#FEBD01";
     return "#FF0054";
+  };
+  const handleClose = () => {
+    setOpen(false);
   };
   const { status } = useSession();
   return (
@@ -211,6 +229,7 @@ export default function Signup() {
                     required
                     className=" w-full h-10 ps-5 outline-none"
                     placeholder="Enter your CNIC"
+                    max={15}
                     onChange={(e) =>
                       setFormData({ ...formData, cnic: e.target.value })
                     }
@@ -268,6 +287,11 @@ export default function Signup() {
               </form>
             </div>
           )}
+          <Snackbar open={open} autoHideDuration={6000} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error" sx={{ width: '100%', }}>
+              {alertmessage}
+            </Alert>
+          </Snackbar>
         </div>
       ) : (
         router.push("/dashboard")

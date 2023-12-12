@@ -10,8 +10,6 @@ export async function POST(request) {
   if (request.method !== "POST") {
     return NextResponse.json({ error: "Method not Allowed" }, { status: 405 });
   }
-  console.log("hello2");
-  console.log(request);
   const { email, name, cnic, password } = await request.json();
   console.log(email,name,cnic,password);
 
@@ -31,7 +29,7 @@ export async function POST(request) {
     const hashedPassword = bcrypt.hashSync(password, salt);
 
     // Insert the user data into the database
-    const result = await createUser(connection, email, name, cnic, hashedPassword);
+    const result = await createUser(connection, email, name, cnic, hashedPassword,'analyzer');
 
     if (result) {
         return NextResponse.json({ message: "User registered successfully" }, { status: 201 });
@@ -50,11 +48,11 @@ async function checkEmailExists(connection, email) {
   return rows.length > 0;
 }
 
-async function createUser(connection, email, name, cnic, password) {
+async function createUser(connection, email, name, cnic, password,role) {
   // Query to insert user data into the database
   const [result] = await connection.execute(
-    'INSERT INTO user (email, name, cnic, password) VALUES (?, ?, ?, ?)',
-    [email, name, cnic, password]
+    'INSERT INTO user (email, name, cnic, password,role) VALUES (?, ?, ?, ?,?)',
+    [email, name, cnic, password,role]
   );
   return result.affectedRows === 1;
 }

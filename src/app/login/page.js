@@ -58,12 +58,17 @@ export default function Login() {
       try {
         //Call the signIn function with the credentials object
         const response = await signIn("credentials", { ...credentials });
+        console.log(response)
         if (response == null) {
           const errorData = await response.json();
           alert(errorData.error);
           const errorCode = response.status;
           console.log("Error Code:", errorCode);
           setError(true);
+        }
+        else
+        {
+          alert(response)
         }
         setIsLoading(false);
         // Handle the response, redirect if needed, etc.
@@ -122,22 +127,27 @@ export default function Login() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email: email, password: password}),
+          body: JSON.stringify({ email: email, password: password }),
         });
-
+      
         const data = await response.json();
-
+      
         if (response.ok) {
-          alert("password Change")
-          setOpen(true)
-          console.log(data.message); 
+          setOpen(true);
+      
+          // Wait for 2 seconds before redirecting to '/'
+          setTimeout(() => {
+            window.location.reload(true)
+          }, 2000);
+      
+          console.log(data.message);
         } else {
-          console.error(data.error); 
+          console.error(data.error);
         }
-
       } catch (error) {
-        console.error("Error sending welcome email:", error);
+        console.error("Error changing password:", error);
       }
+      
     }
     else{
       alert('Password is Week');

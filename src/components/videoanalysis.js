@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 
-function Videoanalysis() {
+function Videoanalysis({role}) {
   const [vehicleCount, setVehicleCount] = useState(0);
   const [status, setStatus] = useState(null);
   const [timer, setTimer] = useState(null);
@@ -76,7 +76,7 @@ function Videoanalysis() {
   // }, []);
 
   return (
-    <div className="w-full h-screen text-black">
+    (role === 'admin'? <div className="w-full h-screen text-black">
       <div className="text-black text-center text-5xl mt-10 font-bold">
         <h1>Vehicle Feeds From Cameras vehicle</h1>
         {console.log(status)}
@@ -128,6 +128,8 @@ function Videoanalysis() {
         </div>
       </div>
     </div>
+    :<></>
+    )
   );
 }
 

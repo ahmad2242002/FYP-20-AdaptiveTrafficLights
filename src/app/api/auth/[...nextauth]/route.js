@@ -11,18 +11,44 @@ const authOptions = {
           body: JSON.stringify(credentials),
           headers: { "Content-Type": "application/json" }
         });
-        const user = await res.json();
-        
-        if (res.ok && user) {
-          return user;
+        const [rawUser] = await res.json();
+
+        if (res.ok && rawUser) {
+          // Extract specific properties from raw user data
+          const { name, email, role } = rawUser[0];
+
+          // Include additional properties like 'role'
+          const user = {
+            name,
+            email,
+            image:role,
+          };
+
+          // Include user data in the session
+          return Promise.resolve(user);
         }
 
-        return Promise.reject('/');
+        return null;
       }
     })
   ],
   callbacks: {
-    async session({ session, token, user }) {
+    async session({ session, user }) {
+      // Log the entire session object for debugging
+      console.log("Session object:", session);
+      console.log("Session object role:", session.user.image);
+      
+
+      // Log specific user properties
+      if (user) {
+        console.log("User in session callback:", user);
+        // Access specific user properties, e.g., user name and role
+        console.log("User Name:", user.name);
+        console.log("User Role:", user.role);
+      } else {
+        console.log("User is undefined in session callback");
+      }
+
       session.expires = new Date(Date.now() + 10 * 1000); // 10 seconds for testing
       return Promise.resolve(session);
     },

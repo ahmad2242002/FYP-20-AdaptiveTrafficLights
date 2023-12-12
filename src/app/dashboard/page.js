@@ -15,6 +15,8 @@ export default function Dashboard(){
   if (typeof window === "undefined") {
     return null; // Return null on the server-side to prevent rendering
   }
+  console.log(session)
+  console.log(session?.user);
   return (
     <>
     {status === "authenticated" ? (
@@ -24,8 +26,8 @@ export default function Dashboard(){
             handleMenuBarClick();
           }}
         >
-          <Sidebar name = {session?.user?.name} active='analysis'></Sidebar>
-            <Videoanalysis></Videoanalysis>
+          <Sidebar role = {session?.user?.image} active='analysis'></Sidebar>
+            <Videoanalysis role = {session?.user?.image}  ></Videoanalysis>
         </div>
       ) : (
         router.push("/")

@@ -24,8 +24,9 @@ export async function POST(request) {
       // Query to check user credentials (replace with your actual query)
       if (passwordMatch) {
         console.log("user found");
-        // Successful sign-in
-        return NextResponse.json({ message: "Sign-in successful" }, { status: 200 });
+        const [userData] = await connection.execute('SELECT * FROM user WHERE email = ?', [email]);
+
+        return NextResponse.json([userData], { status: 200 });
       } else {
         // Invalid credentials
         return NextResponse.json(
