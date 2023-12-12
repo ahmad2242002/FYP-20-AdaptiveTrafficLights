@@ -5,9 +5,12 @@ import threading
 class TrafficSignalController:
     def __init__(self):
         self.vehicle_count = 0
-        self.signal_time = 10
+        self.signal_time = 6
         self.consumed_signal_time = 0
         self.start_time = time.time()
+        self.check = 0
+        self.max_time = 50
+        self.max_vehicle = 6
 
         # Create a lock to ensure safe access to shared data
         self.lock = threading.Lock()
@@ -24,20 +27,27 @@ class TrafficSignalController:
             with self.lock:
                 self.adjust_signal_time()
 
+
     def adjust_signal_time(self):
         current_time = time.time()
-        if current_time - self.start_time < 40:
-            if self.vehicle_count < 5:
-                self.signal_time += 2
-            elif 5 <= self.vehicle_count <= 10:
-                self.signal_time -= 1
-            else:
-                self.signal_time = max(5, self.signal_time - 3)
-        else:
-            self.signal_time -= 1
-        if self.signal_time < 0:
-            self.signal_time = 0
-
+        if self.signal_time == 0:
+            self._signal_time = 0
+        if self.vehicle_count > self.max_vehicle and self.check == 0:
+            self.signal_time = 10
+            self.check = 1
+        elif self.check == 1 and self.vehicle_count > self.max_vehicle:
+            self.signal_time = 10
+        elif self.signal_time > 3:
+            if self.check == 1:
+                self.check = 2
+            self.signal_time = 4
+        if current_time - self.start_time > self.max_time  and self.signal_time > 4:
+            self.check = 2
+            self.signal_time = 4
+        if self.signal_time <=4 and self.signal_time >=0:
+            self.signal_time = max(0, self.signal_time - 1)
+        
+            
     def get_signal_time(self):
         with self.lock:
             return self.signal_time
