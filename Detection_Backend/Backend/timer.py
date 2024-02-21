@@ -9,8 +9,8 @@ class TrafficSignalController:
         self.consumed_signal_time = 0
         self.start_time = time.time()
         self.check = 0
-        self.max_time = 50
-        self.max_vehicle = 6
+        self.max_time = 20
+        self.max_vehicle = 1
 
         # Create a lock to ensure safe access to shared data
         self.lock = threading.Lock()
@@ -47,7 +47,14 @@ class TrafficSignalController:
         if self.signal_time <=4 and self.signal_time >=0:
             self.signal_time = max(0, self.signal_time - 1)
         
-            
+    def reset_controller(self):
+        with self.lock:
+            self.vehicle_count = 0
+            self.signal_time = 6
+            self.consumed_signal_time = 0
+            self.start_time = time.time()
+            self.check = 0
+
     def get_signal_time(self):
         with self.lock:
             return self.signal_time
