@@ -4,23 +4,28 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCube, faDatabase, faGear, faSignOut } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import gridicon from "@/images/gridicon.png";
-
+import stlcsLogo from "@/images/stlcs.png";
 import { signOut } from "next-auth/react";
 import layout from "@/images/layout.png";
-function Sidebar({role,active}) {
+import { useRouter } from "next/navigation";
+function Sidebar({role,active,setActive}) {
+  const router = useRouter();
   {
     return (
       <div className=" h-screen hidden md:grid grid-col-1 w-60 shadow-lg text-black shadow-black bg-[#CBF1F5] ">
         <div className=" flex flex-col">
           <div className="max-lg:ps-4 lg:ps-10 pt-10 space-x-2 flex  items-center  text-xl font-bold">
-            <FontAwesomeIcon
-              icon={faCube}
-              className=" text-slate-900"
-            ></FontAwesomeIcon>
-            <div >STLCS</div>
+            <Image
+                  className=""
+                  height={100}
+                  width={150}
+                  src={stlcsLogo}
+                  alt="image"
+                  quality={100}
+                ></Image>
           </div>
           <div className=" items-center  pt-14 ">
-          {role === 'admin'?<div className={`max-lg:ps-4 ${active ==='analysis' ? 'bg-[#A6E3E9]' : ''} lg:ps-10 py-3 space-x-2 flex  items-center hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer text-lg`}>
+          {role === 'admin'?<div className={`max-lg:ps-4 ${active ==='analysis' ? 'bg-[#A6E3E9]' : ''} lg:ps-10 py-3 space-x-2 flex  items-center hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer text-lg`} onClick={()=>{setActive('analysis')}}>
               <Image
                 height={25}
                 width={25}
@@ -39,7 +44,7 @@ function Sidebar({role,active}) {
               ></Image>
               <div>Reports</div>
             </div>
-           {role === 'admin'? <div className="max-lg:ps-4 lg:ps-10 py-3 space-x-2 flex  items-center  text-lg hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer ">
+           {role === 'admin'? <div className={`max-lg:ps-4 ${active ==='manual' ? 'bg-[#A6E3E9]' : ''} lg:ps-10 py-3 space-x-2 flex  items-center  text-lg hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer `}  onClick={()=>{setActive('manual')}}>
               <FontAwesomeIcon
                 icon={faDatabase}
                 className=" text-slate-500 text-xl"
