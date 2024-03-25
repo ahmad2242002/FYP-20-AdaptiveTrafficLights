@@ -4,9 +4,11 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { Component, useState } from "react";
 import Sidebar from "../../components/sidebar";
-import Videoanalysis from '@/components/videoanalysis'
+import Videoanalysis from '@/components/videoanalysis';
+import Manual from "../manual/page";
 export default function Dashboard(){
   const [showmenu, setShowMenu] = useState(null);
+  const [active, setActive] = useState('analysis');
   const handleMenuBarClick = () => {
     setShowMenu(null);
   };
@@ -26,8 +28,16 @@ export default function Dashboard(){
             handleMenuBarClick();
           }}
         >
-          <Sidebar role = {session?.user?.image} active='analysis'></Sidebar>
+          <Sidebar role = {session?.user?.image} active={active} setActive = {setActive}></Sidebar>
+          {
+            active === 'analysis'?
             <Videoanalysis role = {session?.user?.image}  ></Videoanalysis>
+            : 
+            active === 'manual' ?
+            <Manual></Manual>
+            :
+            <></>
+          }
         </div>
       ) : (
         router.push("/")
