@@ -104,7 +104,7 @@ export default function Signup() {
     }
     else
     {
-      setAlertMessage('Cnic not Valid')
+      setAlertMessage('Cnic not Valid Pattern should 12345-1234567-1')
       setOpen(true)
     }
   }
@@ -243,7 +243,7 @@ export default function Signup() {
                         : handleButtonClick("password");
                     }}
                     icon={showPass === "show" ? faEyeSlash : faEye}
-                    className=" text-slate-600"
+                    className=" text-slate-600 hover:cursor-pointer"
                   ></FontAwesomeIcon>
                   <input
                     className=" w-full h-10 ps-5 outline-none"
