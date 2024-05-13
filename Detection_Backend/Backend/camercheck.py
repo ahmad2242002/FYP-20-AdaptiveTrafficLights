@@ -1,7 +1,7 @@
 import cv2
 
 # Capture from the first webcam
-cap1 = cv2.VideoCapture(4)
+cap1 = cv2.VideoCapture(6)
 
 
 while True:
