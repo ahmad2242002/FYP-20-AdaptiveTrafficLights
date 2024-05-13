@@ -10,6 +10,7 @@ const Manual = () => {
   const [signal2, setSignal2] = useState("");
   const [signal3, setSignal3] = useState("");
   const [signal4, setSignal4] = useState("");
+  const [signal5, setSignal5] = useState("");
   const [mode, setMode] = useState(0);
   const [status, setStatus] = useState(null);
   const [source, setSource] = useState(null);
@@ -20,6 +21,25 @@ const Manual = () => {
   const cameraArray = [0, 2, 4, 6];
   const [timer, setTimer] = useState([]);
   const [manualtimer, setManualTimer] = useState([]);
+  const [cameraCount, setCameraCount] = React.useState(null);
+  async function fetchCount() {
+    try {
+      const response = await fetch("http://169.254.220.186:5000/get_camera_count", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch camera count data");
+      }
+      const data = await response.json();
+      setCameraCount(data.count);
+    } catch (error) {
+      console.error("Error fetching timer data:", error.message);
+    }
+  }
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -38,18 +58,52 @@ const Manual = () => {
     console.log("Signal 2:", signal2);
     console.log("Signal 3:", signal3);
     console.log("Signal 4:", signal4);
-    if (signal1 > 5 && signal2 > 5 && signal3 > 5 && signal4 > 5) {
-      console.log(mode);
-      mode === 0 ? ChangeMod() : restartServer();
-    } else {
-      setAlerts({
-        ...alerts,
-        message: "Signal time must be above 5 seconds",
-        type: "error",
-        open: true,
-      });
-    }
-  };
+    if(cameraCount === 3)
+      {
+        if (signal1 > 5 && signal2 > 5 && signal3 > 5 ) {
+          console.log(mode);
+          mode === 0 ? ChangeMod() : restartServer();
+        } else {
+          setAlerts({
+            ...alerts,
+            message: "Signal time must be above 5 seconds",
+            type: "error",
+            open: true,
+          });
+        }
+      }
+    else if(cameraCount === 5)
+      {
+        if (signal1 > 5 && signal2 > 5 && signal3 > 5 && signal4 > 5 && signal5 > 5 ) {
+          console.log(mode);
+          mode === 0 ? ChangeMod() : restartServer();
+        } else {
+          setAlerts({
+            ...alerts,
+            message: "Signal time must be above 5 seconds",
+            type: "error",
+            open: true,
+          });
+        }
+      }
+      else
+      {
+        {
+          if (signal1 > 5 && signal2 > 5 && signal3 > 5 && signal4 > 5 ) {
+            console.log(mode);
+            mode === 0 ? ChangeMod() : restartServer();
+          } else {
+            setAlerts({
+              ...alerts,
+              message: "Signal time must be above 5 seconds",
+              type: "error",
+              open: true,
+            });
+          }
+        }
+      }
+  }
+    
 
   const handleClose = () => {
     setAlerts({ ...alerts, message: "", open: false, type: "success" });
@@ -64,7 +118,7 @@ const Manual = () => {
       },
       body: JSON.stringify({
         value: 1,
-        timers: [signal1, signal3, signal4, signal2],
+        timers: cameraCount === 4 ? [signal1, signal3, signal4, signal2] : cameraCount === 5 ? [signal1, signal3, signal4, signal2, signal5]:[signal1, signal3 , signal2] ,
       }),
     })
       .then((response) => {
@@ -101,10 +155,31 @@ const Manual = () => {
       setMode(data.mode === false ? 0 : 1);
       if(data.mode)
       {
-        setSignal1(manualtimer[0])
-        setSignal2(manualtimer[3])
-        setSignal3(manualtimer[1])
-        setSignal4(manualtimer[2])
+        if(cameraCount === 3)
+        {
+            alert('dsdsad')
+            console.log(manualtimer)
+            setSignal1(manualtimer[0])
+            setSignal2(manualtimer[1])
+            setSignal3(manualtimer[2])
+        }
+        else if(cameraCount === 5)
+        {
+          alert('5')
+            setSignal1(manualtimer[0])
+            setSignal2(manualtimer[3])
+            setSignal3(manualtimer[1])
+            setSignal4(manualtimer[2])
+            setSignal5(manualtimer[4])
+        }
+        else if(cameraCount === 4)
+        {
+          alert('4')
+          setSignal1(manualtimer[0])
+          setSignal2(manualtimer[3])
+          setSignal3(manualtimer[1])
+          setSignal4(manualtimer[2])
+        }
       }
     } catch (error) {
       console.error("Error fetching timer data:", error.message);
@@ -112,8 +187,15 @@ const Manual = () => {
   }
 
   useEffect(() => {
-    fetchMod();
+    fetchCount();
   }, []);
+
+  useEffect(() => {
+      fetchMod();
+  }, [cameraCount]);
+
+
+
 
   async function restartServer() {
     try {
@@ -213,10 +295,27 @@ const Manual = () => {
   useEffect(()=>{
     if(mode)
     {
-      setSignal1(manualtimer[0])
-      setSignal2(manualtimer[3])
-      setSignal3(manualtimer[1])
-      setSignal4(manualtimer[2])
+      if(cameraCount === 3)
+        {
+            setSignal1(manualtimer[0])
+            setSignal2(manualtimer[1])
+            setSignal3(manualtimer[2])
+        }
+        else if(cameraCount === 5)
+        {
+            setSignal1(manualtimer[0])
+            setSignal2(manualtimer[3])
+            setSignal3(manualtimer[1])
+            setSignal4(manualtimer[2])
+            setSignal5(manualtimer[4])
+        }
+        else if(cameraCount === 4)
+        {
+          setSignal1(manualtimer[0])
+          setSignal2(manualtimer[3])
+          setSignal3(manualtimer[1])
+          setSignal4(manualtimer[2])
+        }
     }
   },[manualtimer,mode])
   return (
@@ -226,7 +325,9 @@ const Manual = () => {
           <div className="processing-spinner"></div>
           <p className=" text-xl font-bold">Changing Mod</p>
         </div>
-      ) : (
+      ) : 
+        cameraCount === 4 ?
+        (
         <div className=" items-center text-center justify-center bg-[#A6E3E9] grid grid-rows-3 m-10 rounded-3xl  h-full p-10">
           <img id="video-feed" src={source} alt="Video Feed" className=" border-4  border-black drop-shadow-xl rounded-xl absolute right-0 top-5 w-96 mr-10" />
           <div className=" flex flex-col items-center space-y-3  h-full   ">
@@ -349,6 +450,276 @@ const Manual = () => {
                 {signals[2] === 1 ? timer : 0}
               </h1>
             </div>
+          </div>
+          {/* <TrafficSignal></TrafficSignal>
+            <TrafficSignal></TrafficSignal>
+            <TrafficSignal></TrafficSignal> */}
+        </div>)
+        : cameraCount === 5 ?
+        (<div className=" items-center text-center justify-center bg-[#A6E3E9]  flex m-10 rounded-3xl  h-full p-10">
+          <img id="video-feed" src={source} alt="Video Feed" className=" border-4  border-black drop-shadow-xl rounded-xl absolute right-0 top-5 w-96 mr-10" />
+          <div className="  flex flex-col items-center justify-center text-center">
+
+            <div className=" items-center flex w-1/2 justify-center">
+              <button
+                className=" bg-[#71C9CE] my-3 w-full font-semibold h-12 border-2 active:scale-90 transition duration-200 drop-shadow-sm hover:scale-105 text-black border-[#A6E3E9] rounded-xl"
+                name={"mode"}
+                onClick={handleSubmit}
+              >
+                {mode === 0 ? "Set Manual Mod" : "Set Adaptive Mod"}
+              </button>
+            </div>
+            
+            <div className=" grid grid-cols-5 0 h-full w-full space-x-5">
+            <div className=" flex flex-col items-center space-y-3 ">
+              <div className="mb-4">
+                <label
+                  htmlFor="signal3"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Signal 1 Duration (in seconds)
+                </label>
+                <input
+                  type="number"
+                  id="signal1"
+                  disabled = {mode == 1? true:false}
+                  className="w-full h-10 ps-5 outline-none rounded-lg text-black"
+                  value={signal1}
+                  onChange={(e) => setSignal1(e.target.value)}
+                />
+              </div>
+              <TrafficSignal timer={signals[0] === 1 ? timer : 0}></TrafficSignal>
+              <div className=" flex space-x-3 items-center">
+                <h1 className=" text-black font-semibold text-lg">
+                  Signal 1
+                </h1>
+                <h1 className=" text-black bg-gray-300 drop-shadow-lg animate-pulse border-2 border-teal-500 px-3 py-1 rounded-lg font-semibold text-lg">
+                  {signals[0] === 1 ? timer : 0}
+                </h1>
+              </div>
+            </div>
+            <div className=" flex flex-col items-center space-y-3 ">
+              <div className="mb-4">
+                <label
+                  htmlFor="signal3"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Signal 2 Duration (in seconds)
+                </label>
+                <input
+                  type="number"
+                  id="signal2"
+                  disabled = {mode == 1? true:false}
+                  className="w-full h-10 ps-5 outline-none rounded-lg text-black"
+                  value={signal2}
+                  onChange={(e) => setSignal2(e.target.value)}
+                />
+              </div>
+              <TrafficSignal timer={signals[1] === 1 ? timer : 0}></TrafficSignal>
+              <div className=" flex space-x-3 items-center">
+                <h1 className=" text-black font-semibold text-lg">
+                  Signal 2
+                </h1>
+                <h1 className=" text-black bg-gray-300 drop-shadow-lg animate-pulse border-2 border-teal-500 px-3 py-1 rounded-lg font-semibold text-lg">
+                  {signals[1] === 1 ? timer : 0}
+                </h1>
+              </div>
+            </div>
+            <div className=" flex flex-col items-center space-y-3 ">
+              <div className="mb-4">
+                <label
+                  htmlFor="signal3"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Signal 3 Duration (in seconds)
+                </label>
+                <input
+                  type="number"
+                  id="signal3"
+                  disabled = {mode == 1? true:false}
+                  className="w-full h-10 ps-5 outline-none rounded-lg text-black"
+                  value={signal3}
+                  onChange={(e) => setSignal3(e.target.value)}
+                />
+              </div>
+              <TrafficSignal timer={signals[2] === 1 ? timer : 0}></TrafficSignal>
+              <div className=" flex space-x-3 items-center">
+                <h1 className=" text-black font-semibold text-lg">
+                  Signal 3
+                </h1>
+                <h1 className=" text-black bg-gray-300 drop-shadow-lg animate-pulse border-2 border-teal-500 px-3 py-1 rounded-lg font-semibold text-lg">
+                  {signals[2] === 1 ? timer : 0}
+                </h1>
+              </div>
+            </div>
+            <div className=" flex flex-col items-center space-y-3 ">
+              <div className="mb-4">
+                <label
+                  htmlFor="signal3"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Signal 4 Duration (in seconds)
+                </label>
+                <input
+                  type="number"
+                  id="signal4"
+                  disabled = {mode == 1? true:false}
+                  className="w-full h-10 ps-5 outline-none rounded-lg text-black"
+                  value={signal4}
+                  onChange={(e) => setSignal4(e.target.value)}
+                />
+              </div>
+              <TrafficSignal timer={signals[3] === 1 ? timer : 0}></TrafficSignal>
+              <div className=" flex space-x-3 items-center">
+                <h1 className=" text-black font-semibold text-lg">
+                 Signal 4
+                </h1>
+                <h1 className=" text-black bg-gray-300 drop-shadow-lg animate-pulse border-2 border-teal-500 px-3 py-1 rounded-lg font-semibold text-lg">
+                  {signals[3] === 1 ? timer : 0}
+                </h1>
+              </div>
+            </div>
+            <div className=" flex flex-col items-center space-y-3 ">
+              <div className="mb-4">
+                <label
+                  htmlFor="signal3"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Signal 4 Duration (in seconds)
+                </label>
+                <input
+                  type="number"
+                  id="signal5"
+                  disabled = {mode == 1? true:false}
+                  className="w-full h-10 ps-5 outline-none rounded-lg text-black"
+                  value={signal5}
+                  onChange={(e) => setSignal5(e.target.value)}
+                />
+              </div>
+              <TrafficSignal timer={signals[4] === 1 ? timer : 0}></TrafficSignal>
+              <div className=" flex space-x-3 items-center">
+                <h1 className=" text-black font-semibold text-lg">
+                  Signal 5
+                </h1>
+                <h1 className=" text-black bg-gray-300 drop-shadow-lg animate-pulse border-2 border-teal-500 px-3 py-1 rounded-lg font-semibold text-lg">
+                  {signals[4] === 1 ? timer : 0}
+                </h1>
+              </div>
+            </div>
+            </div>
+            
+
+
+
+            
+          </div>
+          {/* <TrafficSignal></TrafficSignal>
+            <TrafficSignal></TrafficSignal>
+            <TrafficSignal></TrafficSignal> */}
+        </div>)
+        :
+        (<div className=" items-center text-center justify-center bg-[#A6E3E9]  flex m-10 rounded-3xl  h-full p-10">
+          <img id="video-feed" src={source} alt="Video Feed" className=" border-4  border-black drop-shadow-xl rounded-xl absolute right-0 top-5 w-96 mr-10" />
+          <div className="  flex flex-col items-center justify-center text-center">
+
+            <div className=" items-center flex w-1/2 justify-center">
+              <button
+                className=" bg-[#71C9CE] my-3 w-full font-semibold h-12 border-2 active:scale-90 transition duration-200 drop-shadow-sm hover:scale-105 text-black border-[#A6E3E9] rounded-xl"
+                name={"mode"}
+                onClick={handleSubmit}
+              >
+                {mode === 0 ? "Set Manual Mod" : "Set Adaptive Mod"}
+              </button>
+            </div>
+            
+            <div className=" grid grid-cols-3 0 h-full w-full space-x-5">
+            <div className=" flex flex-col items-center space-y-3 ">
+              <div className="mb-4">
+                <label
+                  htmlFor="signal3"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Signal 1 Duration (in seconds)
+                </label>
+                <input
+                  type="number"
+                  id="signal1"
+                  disabled = {mode == 1? true:false}
+                  className="w-full h-10 ps-5 outline-none rounded-lg text-black"
+                  value={signal1}
+                  onChange={(e) => setSignal1(e.target.value)}
+                />
+              </div>
+              <TrafficSignal timer={signals[0] === 1 ? timer : 0}></TrafficSignal>
+              <div className=" flex space-x-3 items-center">
+                <h1 className=" text-black font-semibold text-lg">
+                  Signal 1
+                </h1>
+                <h1 className=" text-black bg-gray-300 drop-shadow-lg animate-pulse border-2 border-teal-500 px-3 py-1 rounded-lg font-semibold text-lg">
+                  {signals[0] === 1 ? timer : 0}
+                </h1>
+              </div>
+            </div>
+            <div className=" flex flex-col items-center space-y-3 ">
+              <div className="mb-4">
+                <label
+                  htmlFor="signal3"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Signal 2 Duration (in seconds)
+                </label>
+                <input
+                  type="number"
+                  id="signal2"
+                  disabled = {mode == 1? true:false}
+                  className="w-full h-10 ps-5 outline-none rounded-lg text-black"
+                  value={signal2}
+                  onChange={(e) => setSignal2(e.target.value)}
+                />
+              </div>
+              <TrafficSignal timer={signals[1] === 1 ? timer : 0}></TrafficSignal>
+              <div className=" flex space-x-3 items-center">
+                <h1 className=" text-black font-semibold text-lg">
+                  Signal 2
+                </h1>
+                <h1 className=" text-black bg-gray-300 drop-shadow-lg animate-pulse border-2 border-teal-500 px-3 py-1 rounded-lg font-semibold text-lg">
+                  {signals[1] === 1 ? timer : 0}
+                </h1>
+              </div>
+            </div>
+            <div className=" flex flex-col items-center space-y-3 ">
+              <div className="mb-4">
+                <label
+                  htmlFor="signal3"
+                  className="block text-sm font-medium text-gray-600"
+                >
+                  Signal 3 Duration (in seconds)
+                </label>
+                <input
+                  type="number"
+                  id="signal3"
+                  disabled = {mode == 1? true:false}
+                  className="w-full h-10 ps-5 outline-none rounded-lg text-black"
+                  value={signal3}
+                  onChange={(e) => setSignal3(e.target.value)}
+                />
+              </div>
+              <TrafficSignal timer={signals[2] === 1 ? timer : 0}></TrafficSignal>
+              <div className=" flex space-x-3 items-center">
+                <h1 className=" text-black font-semibold text-lg">
+                  Signal 3
+                </h1>
+                <h1 className=" text-black bg-gray-300 drop-shadow-lg animate-pulse border-2 border-teal-500 px-3 py-1 rounded-lg font-semibold text-lg">
+                  {signals[2] === 1 ? timer : 0}
+                </h1>
+              </div>
+            </div>
+            </div>
+            
+
+
+
+            
           </div>
           {/* <TrafficSignal></TrafficSignal>
             <TrafficSignal></TrafficSignal>

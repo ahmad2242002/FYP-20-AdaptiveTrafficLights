@@ -38,7 +38,7 @@ function Sidebar({role,active,setActive}) {
               <div>Analysis</div>
             </div>:
             ''}
-            <div className="max-lg:ps-4 lg:ps-10 py-3 space-x-2 flex  items-center  text-lg hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer">
+            <div className={`max-lg:ps-4 lg:ps-10 ${active ==='reports' ? 'bg-[#A6E3E9]' : ''}  py-3 space-x-2 flex  items-center  text-lg hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer`} onClick={()=>{setActive('reports')}}>
               <Image
                 height={24}
                 width={24}
@@ -59,7 +59,7 @@ function Sidebar({role,active,setActive}) {
             :
             ''
            }
-            <div className="max-lg:ps-4 lg:ps-10 py-3 space-x-2 flex  items-center  text-lg hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer">
+            <div className={`max-lg:ps-4 lg:ps-10 py-3  ${active ==='setting' ? 'bg-[#A6E3E9]' : ''} space-x-2 flex  items-center  text-lg hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer`} onClick={()=>{setActive('setting')}}>
               <FontAwesomeIcon
                 icon={faGear}
                 className=" text-slate-500 text-xl"
