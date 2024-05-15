@@ -20,7 +20,8 @@ class TrafficSignalController:
 
     def update_count(self, count):
         with self.lock:
-            self.vehicle_count = count
+            if count >= 0:
+                self.vehicle_count = count
 
     def adjust_signal_time_thread(self):
         while True:

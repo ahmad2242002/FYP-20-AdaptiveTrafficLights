@@ -65,8 +65,7 @@ def process_frame(frame, net, layer_names, classes):
             cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
             cv2.putText(frame, label + " " + str(round(confidence, 2)), (x, y - 5),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-    cv2.putText(frame, f'Number of Vehicles: {total}', (10, 40),
-                cv2.FONT_HERSHEY_SIMPLEX, 1.5, (47, 5, 5), 3)
+            cv2.putText(frame, f'Number of Vehicles: {total}', (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 3)
 
     return frame, total
 

@@ -34,9 +34,9 @@ video_processing_initialized.set()
 scheduler = BackgroundScheduler(daemon=True)
 scheduler.start()
 #input_array = ["0", "2", "4", "6"]
-input_array = ["0", "2", "4", "6", "8"]
+#input_array = ["0", "2", "4", "6", "8"]
 #input_array = ["0", "2", "4", "6", "Components/demo.mp4"]
-#input_array = ["Components/demo.mp4", "0", "0", "0"]
+input_array = ["Components/demo.mp4", "0", "0", "0"]
 timer_signals = [0, 0, 0, 0, 0]
 manual_timer_signals = [10, 10, 10, 10, 10]
 manual_mode = False
@@ -45,7 +45,7 @@ manual_vid_index = 0
 reverse_mode = False
 splitPhase = False
 prev_manual_vid_index = 0
-no_of_Camera = 5
+no_of_Camera = 4
 #input_array[index_vid]
 def video_processing():
     global frame, check_vid, index_vid,prev_index_vid, manual_mode, manual_vid_index, prev_manual_vid_index
