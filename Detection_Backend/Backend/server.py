@@ -33,13 +33,19 @@ video_processing_initialized.set()
 # Create a background scheduler
 scheduler = BackgroundScheduler(daemon=True)
 scheduler.start()
-input_array = ["0", "2", "4", "6"]
-timer_signals = [0, 0, 0, 0]
-manual_timer_signals = [10, 10, 10, 10]
+#input_array = ["0", "2", "4", "6"]
+input_array = ["0", "2", "4", "6", "8"]
+#input_array = ["0", "2", "4", "6", "Components/demo.mp4"]
+#input_array = ["0", "0", "0", "0"]
+timer_signals = [0, 0, 0, 0, 0]
+manual_timer_signals = [10, 10, 10, 10, 10]
 manual_mode = False
 can_shift = False
 manual_vid_index = 0
+reverse_mode = False
+splitPhase = False
 prev_manual_vid_index = 0
+no_of_Camera = 4
 #input_array[index_vid]
 def video_processing():
     global frame, check_vid, index_vid,prev_index_vid, manual_mode, manual_vid_index, prev_manual_vid_index
@@ -53,6 +59,8 @@ def video_processing():
             cap = cv2.VideoCapture(4)
         elif (input_array[index_vid] == '6' and manual_mode == False)  or (manual_vid_index == 6 and manual_mode == True):
             cap = cv2.VideoCapture(6)
+        elif (input_array[index_vid] == '8' and manual_mode == False)  or (manual_vid_index == 8 and manual_mode == True):
+            cap = cv2.VideoCapture(8)
         else:
             cap = cv2.VideoCapture(input_array[index_vid])
         cap.set(3, 620)  # Width
@@ -63,7 +71,7 @@ def video_processing():
             if ret:
                 with threading.Lock():
                     frame = current_frame
-                    if index_vid != prev_index_vid:
+                    if index_vid != prev_index_vid: # when camera get shift
                     # Release the current capture instance
                         cap.release()
                         # Update the previous index
@@ -83,6 +91,8 @@ def video_processing():
                             cap = cv2.VideoCapture(4)
                         elif (input_array[index_vid] == '6' and manual_mode == False) or (manual_vid_index == 6 and manual_mode == True):
                             cap = cv2.VideoCapture(6)
+                        elif (input_array[index_vid] == '8' and manual_mode == False)  or (manual_vid_index == 8 and manual_mode == True):
+                            cap = cv2.VideoCapture(8)
                         else:
                             cap = cv2.VideoCapture(input_array[index_vid])
                         cap.set(3, 620)  # Width
@@ -97,6 +107,8 @@ def video_processing():
                             cap = cv2.VideoCapture(4)
                         elif manual_vid_index == 6:
                             cap = cv2.VideoCapture(6)
+                        elif manual_vid_index == 8:
+                            cap = cv2.VideoCapture(8)
                         else:
                             cap = cv2.VideoCapture(input_array[index_vid])
                         cap.set(3, 620)  # Width
@@ -122,6 +134,8 @@ def video_processing():
                     cap = cv2.VideoCapture(4)
                 elif (input_array[index_vid] == '6' and manual_mode == False)  or (manual_vid_index == 6 and manual_mode == True):
                     cap = cv2.VideoCapture(6)
+                elif (input_array[index_vid] == '8' and manual_mode == False)  or (manual_vid_index == 8 and manual_mode == True):
+                    cap = cv2.VideoCapture(8)
                 else:
                     cap = cv2.VideoCapture(input_array[index_vid])
                 if manual_mode:
@@ -139,7 +153,7 @@ def adjust_signal_time():
 scheduler.add_job(adjust_signal_time, 'interval', seconds=1)
 
 def generate_frames():
-    global frame, check_vid, index_vid, can_shift, manual_timer_signals, manual_vid_index, input_array
+    global frame, check_vid, index_vid, can_shift, manual_timer_signals, manual_vid_index, input_array, reverse_mode, splitPhase, no_of_Camera 
     check_vid = 0
     check_vid1 = -1
     while True:
@@ -163,13 +177,30 @@ def generate_frames():
                 timer_signals[1] = 0;
                 timer_signals[2] = 0;
                 timer_signals[3] = 0;
+                timer_signals[4] = 0;
             elif(controller.get_signal_time() <= 4):
                 timer_signals[index_vid] = 1;
             if(controller.get_signal_time() == 0 and check_vid == 1):
                 check_vid = 0 
                 check_vid1 = -1
                 with threading.Lock():
-                    index_vid = (index_vid + 1) % len(input_array)
+                    if reverse_mode == True:
+                        index_vid = (index_vid - 1)
+                        if index_vid <= -1:
+                            if no_of_Camera == 5:
+                                index_vid = 4
+                            elif no_of_Camera == 3:
+                                index_vid = 2
+                            else: 
+                                index_vid = 3
+                    elif splitPhase == True:
+                        index_vid = (index_vid + 2)
+                        if index_vid == 4:
+                            index_vid = 1
+                        elif index_vid == 5:
+                            index_vid = 0
+                    else:
+                        index_vid = (index_vid + 1) % no_of_Camera
                     #manual_vid_index = int(input_array[index_vid])
                     if index_vid == 0:
                         can_shift = True
@@ -268,13 +299,61 @@ def set_manual():
     return jsonify({'message': 'Variable set successfully'})
     
 
+@app.route('/set_reverse', methods=['GET'])
+def set_reverse():
+    print('hello Reverse call')
+    global reverse_mode, index_vid, no_of_Camera
+    while can_shift == False:
+        pass
+    if reverse_mode == True:
+        reverse_mode = False
+        index_vid = 0
+    else:
+        if no_of_Camera == 5:
+            index_vid = 4
+        elif no_of_Camera == 4:
+            index_vid = 3
+        elif no_of_Camera == 3:
+            index_vid = 2
+        reverse_mode = True
+    return jsonify({'message': 'Reverse successfully'})
+    
+
+@app.route('/set_split_phasing', methods=['GET'])
+def set_split_phasing():
+    print('hello set_split_phasing call')
+    global reverse_mode, index_vid, splitPhase, no_of_Camera
+    if no_of_Camera != 4:
+        return jsonify({'error': 'Can not apply split on odd cameras'})
+    while can_shift == False:
+        pass
+    index_vid = 0
+    if splitPhase == True:
+        splitPhase = False
+    else:
+        splitPhase = True
+    return jsonify({'message': 'Split Phase successfully'})
+    
+@app.route('/set_normal', methods=['GET'])
+def set_normal():
+    print('hello set_split_phasing call')
+    global reverse_mode, index_vid, splitPhase
+    while can_shift == False:
+        pass
+    index_vid = 0    
+    splitPhase = False
+    reverse_mode = False
+    return jsonify({'message': 'Normal Phase successfully'})
+    
+
 @app.route('/shift_cam', methods=['POST'])
 def shift_cam():
     print('hello manual camera call ')
     global manual_vid_index
     data = request.get_json()
     index = data.get('index')
-    manual_vid_index = int(index)
+    #manual_vid_index = int(index)
+    manual_vid_index = 0
     print('hello manual camera call ',manual_vid_index)
     return jsonify({'message': 'Camera Change successfully'})
 
@@ -282,6 +361,21 @@ def shift_cam():
 def get_mode():
     global manual_mode
     return jsonify({'mode': manual_mode})
+    
+@app.route('/get_phase', methods=['GET'])
+def get_phase():
+    global reverse_mode, index_vid, splitPhase
+    if reverse_mode == True:
+        return jsonify({'phase': 'Clockwise'})
+    if splitPhase == True:
+        return jsonify({'phase': 'Split-Phase'})    
+    return jsonify({'phase': 'Anti-Clockwise'})
+
+    
+@app.route('/get_camera_count', methods=['GET'])
+def get_camera_count():
+    global no_of_Camera
+    return jsonify({'count': no_of_Camera})
 
 
 
@@ -294,6 +388,22 @@ def restart_server():
         prev_index_vid = index_vid
     return jsonify({'message': 'Server restarted successfully'})
 
+@app.route('/change_no_camera', methods=['POST'])
+def change_no_camera():
+    print('hello change_no_camera ')
+    global  no_of_Camera, manual_mode, index_vid, prev_index_vid
+    while can_shift == False:
+        pass
+    data = request.get_json()
+    no = data.get('no_of_camera')
+    
+    no_of_Camera = int(no)
+    print(no_of_Camera)
+    if manual_mode == True:
+        manual_mode = False
+        index_vid = 0
+        prev_index_vid = index_vid
+    return jsonify({'message': 'Camera Number successfully'})
 
 if __name__ == "__main__":
     video_thread = threading.Thread(target=video_processing)
