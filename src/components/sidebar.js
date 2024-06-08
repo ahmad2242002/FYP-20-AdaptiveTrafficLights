@@ -4,7 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCube, faDatabase, faGear, faSignOut } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import gridicon from "@/images/gridicon.png";
+import traffic from '@/images/traffic.png'
+import analysis from '@/images/analysis.png'
 import stlcsLogo from "@/images/stlcs.png";
+import hand from '@/images/hand.png'
 import { signOut } from "next-auth/react";
 import layout from "@/images/layout.png";
 import { useRouter } from "next/navigation";
@@ -27,34 +30,36 @@ function Sidebar({role,active,setActive}) {
           <div className=" items-center  pt-14 ">
           {role === 'admin'?<div className={`max-lg:ps-4 ${active ==='analysis' ? 'bg-[#A6E3E9]' : ''} lg:ps-10 py-3 space-x-2 flex  items-center hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer text-lg`} onClick={()=>{setActive('analysis')}}>
               <Image
-                height={25}
-                width={25}
-                src={gridicon}
+                height={28}
+                width={28}
+                src={traffic}
                 alt="grid icon "
               ></Image>
               <div>Analysis</div>
             </div>:
             ''}
-            <div className="max-lg:ps-4 lg:ps-10 py-3 space-x-2 flex  items-center  text-lg hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer">
+            <div className={`max-lg:ps-4 lg:ps-10 ${active ==='reports' ? 'bg-[#A6E3E9]' : ''}  py-3 space-x-2 flex  items-center  text-lg hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer`} onClick={()=>{setActive('reports')}}>
               <Image
-                height={20}
-                width={20}
-                src={layout}
+                height={24}
+                width={24}
+                src={analysis}
                 alt="grid icon "
               ></Image>
               <div>Reports</div>
             </div>
            {role === 'admin'? <div className={`max-lg:ps-4 ${active ==='manual' ? 'bg-[#A6E3E9]' : ''} lg:ps-10 py-3 space-x-2 flex  items-center  text-lg hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer `}  onClick={()=>{setActive('manual')}}>
-              <FontAwesomeIcon
-                icon={faDatabase}
-                className=" text-slate-500 text-xl"
-              ></FontAwesomeIcon>
+              <Image
+                height={24}
+                width={24}
+                src={hand}
+                alt="grid icon "
+              ></Image>
               <div>Manual Control</div>
             </div>
             :
             ''
            }
-            <div className="max-lg:ps-4 lg:ps-10 py-3 space-x-2 flex  items-center  text-lg hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer">
+            <div className={`max-lg:ps-4 lg:ps-10 py-3  ${active ==='setting' ? 'bg-[#A6E3E9]' : ''} space-x-2 flex  items-center  text-lg hover:bg-[#A6E3E9] focus:bg-[#A6E3E9] hover:cursor-pointer`} onClick={()=>{setActive('setting')}}>
               <FontAwesomeIcon
                 icon={faGear}
                 className=" text-slate-500 text-xl"
