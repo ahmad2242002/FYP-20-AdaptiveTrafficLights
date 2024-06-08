@@ -298,8 +298,8 @@ const Manual = () => {
       if(cameraCount === 3)
         {
             setSignal1(manualtimer[0])
-            setSignal2(manualtimer[1])
-            setSignal3(manualtimer[2])
+            setSignal2(manualtimer[2])
+            setSignal3(manualtimer[1])
         }
         else if(cameraCount === 5)
         {
@@ -714,6 +714,7 @@ const Manual = () => {
                 </h1>
               </div>
             </div>
+         
             </div>
             
 
