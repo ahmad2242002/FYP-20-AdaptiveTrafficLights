@@ -34,9 +34,9 @@ video_processing_initialized.set()
 scheduler = BackgroundScheduler(daemon=True)
 scheduler.start()
 #input_array = ["0", "2", "4", "6"]
-#input_array = ["0", "2", "4", "6", "8"]
+input_array = ["0", "2", "4", "6", "8"]
 #input_array = ["0", "2", "4", "6", "Components/demo.mp4"]
-input_array = ["Components/demo.mp4", "0", "0", "0"]
+#input_array = ["0", "0", "0", "0"]
 timer_signals = [0, 0, 0, 0, 0]
 manual_timer_signals = [10, 10, 10, 10, 10]
 manual_mode = False
